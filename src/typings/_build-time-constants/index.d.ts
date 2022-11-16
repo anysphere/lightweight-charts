@@ -5,7 +5,8 @@
 declare namespace NodeJS {
 	interface ProcessEnv {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		NODE_ENV: 'development' | 'production';
+		NODE_ENV: "development" | "production";
+		LIGHTWEIGHT_CHARTS_NODE_ENV: "development" | "production";
 
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		BUILD_VERSION: string;

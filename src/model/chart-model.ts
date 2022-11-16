@@ -1,32 +1,37 @@
-/// <reference types="_build-time-constants" />
+import { assert, ensureNotNull } from "../helpers/assertions";
+import { gradientColorAtPercent } from "../helpers/color";
+import { Delegate } from "../helpers/delegate";
+import { IDestroyable } from "../helpers/idestroyable";
+import { ISubscription } from "../helpers/isubscription";
+import { DeepPartial, merge } from "../helpers/strict-type-checks";
 
-import { assert, ensureNotNull } from '../helpers/assertions';
-import { gradientColorAtPercent } from '../helpers/color';
-import { Delegate } from '../helpers/delegate';
-import { IDestroyable } from '../helpers/idestroyable';
-import { ISubscription } from '../helpers/isubscription';
-import { DeepPartial, merge } from '../helpers/strict-type-checks';
+import { PriceAxisViewRendererOptions } from "../renderers/iprice-axis-view-renderer";
+import { PriceAxisRendererOptionsProvider } from "../renderers/price-axis-renderer-options-provider";
 
-import { PriceAxisViewRendererOptions } from '../renderers/iprice-axis-view-renderer';
-import { PriceAxisRendererOptionsProvider } from '../renderers/price-axis-renderer-options-provider';
-
-import { Coordinate } from './coordinate';
-import { Crosshair, CrosshairOptions } from './crosshair';
-import { DefaultPriceScaleId, isDefaultPriceScale } from './default-price-scale';
-import { GridOptions } from './grid';
-import { InvalidateMask, InvalidationLevel, ITimeScaleAnimation } from './invalidate-mask';
-import { IPriceDataSource } from './iprice-data-source';
-import { ColorType, LayoutOptions } from './layout-options';
-import { LocalizationOptions } from './localization-options';
-import { Magnet } from './magnet';
-import { DEFAULT_STRETCH_FACTOR, Pane } from './pane';
-import { Point } from './point';
-import { PriceScale, PriceScaleOptions } from './price-scale';
-import { Series, SeriesOptionsInternal } from './series';
-import { SeriesOptionsMap, SeriesType } from './series-options';
-import { LogicalRange, TimePointIndex, TimeScalePoint } from './time-data';
-import { TimeScale, TimeScaleOptions } from './time-scale';
-import { Watermark, WatermarkOptions } from './watermark';
+import { Coordinate } from "./coordinate";
+import { Crosshair, CrosshairOptions } from "./crosshair";
+import {
+	DefaultPriceScaleId,
+	isDefaultPriceScale,
+} from "./default-price-scale";
+import { GridOptions } from "./grid";
+import {
+	InvalidateMask,
+	InvalidationLevel,
+	ITimeScaleAnimation,
+} from "./invalidate-mask";
+import { IPriceDataSource } from "./iprice-data-source";
+import { ColorType, LayoutOptions } from "./layout-options";
+import { LocalizationOptions } from "./localization-options";
+import { Magnet } from "./magnet";
+import { DEFAULT_STRETCH_FACTOR, Pane } from "./pane";
+import { Point } from "./point";
+import { PriceScale, PriceScaleOptions } from "./price-scale";
+import { Series, SeriesOptionsInternal } from "./series";
+import { SeriesOptionsMap, SeriesType } from "./series-options";
+import { LogicalRange, TimePointIndex, TimeScalePoint } from "./time-data";
+import { TimeScale, TimeScaleOptions } from "./time-scale";
+import { Watermark, WatermarkOptions } from "./watermark";
 
 /**
  * Represents options for how the chart is scrolled by the mouse and touch gestures.
@@ -113,15 +118,16 @@ export interface KineticScrollOptions {
 	mouse: boolean;
 }
 
-type HandleScaleOptionsInternal =
-	Omit<HandleScaleOptions, 'axisPressedMouseMove' | 'axisDoubleClickReset'>
-	& {
-		/** @public */
-		axisPressedMouseMove: AxisPressedMouseMoveOptions;
+type HandleScaleOptionsInternal = Omit<
+	HandleScaleOptions,
+	"axisPressedMouseMove" | "axisDoubleClickReset"
+> & {
+	/** @public */
+	axisPressedMouseMove: AxisPressedMouseMoveOptions;
 
-		/** @public */
-		axisDoubleClickReset: AxisDoubleClickOptions;
-	};
+	/** @public */
+	axisDoubleClickReset: AxisDoubleClickOptions;
+};
 
 /**
  * Represents options for how the time and price axes react to mouse movements.
@@ -193,7 +199,10 @@ export type VisiblePriceScaleOptions = PriceScaleOptions;
 /**
  * Represents overlay price scale options.
  */
-export type OverlayPriceScaleOptions = Omit<PriceScaleOptions, 'visible' | 'autoScale'>;
+export type OverlayPriceScaleOptions = Omit<
+	PriceScaleOptions,
+	"visible" | "autoScale"
+>;
 
 /**
  * Determine how to exit the tracking mode.
@@ -314,19 +323,19 @@ export interface ChartOptions {
 	/** @inheritDoc TrackingModeOptions
 	 */
 	trackingMode: TrackingModeOptions;
-
 }
 
-export type ChartOptionsInternal =
-	Omit<ChartOptions, 'handleScroll' | 'handleScale' | 'layout'>
-	& {
-		/** @public */
-		handleScroll: HandleScrollOptions;
-		/** @public */
-		handleScale: HandleScaleOptionsInternal;
-		/** @public */
-		layout: LayoutOptions;
-	};
+export type ChartOptionsInternal = Omit<
+	ChartOptions,
+	"handleScroll" | "handleScale" | "layout"
+> & {
+	/** @public */
+	handleScroll: HandleScrollOptions;
+	/** @public */
+	handleScale: HandleScaleOptionsInternal;
+	/** @public */
+	layout: LayoutOptions;
+};
 
 interface GradientColorsCache {
 	topColor: string;
@@ -351,19 +360,27 @@ export class ChartModel implements IDestroyable {
 	private _width: number = 0;
 	private _hoveredSource: HoveredSource | null = null;
 	private readonly _priceScalesOptionsChanged: Delegate = new Delegate();
-	private _crosshairMoved: Delegate<TimePointIndex | null, Point | null> = new Delegate();
+	private _crosshairMoved: Delegate<TimePointIndex | null, Point | null> =
+		new Delegate();
 
 	private _backgroundTopColor: string;
 	private _backgroundBottomColor: string;
 	private _gradientColorsCache: GradientColorsCache | null = null;
 
-	public constructor(invalidateHandler: InvalidateHandler, options: ChartOptionsInternal) {
+	public constructor(
+		invalidateHandler: InvalidateHandler,
+		options: ChartOptionsInternal
+	) {
 		this._invalidateHandler = invalidateHandler;
 		this._options = options;
 
 		this._rendererOptionsProvider = new PriceAxisRendererOptionsProvider(this);
 
-		this._timeScale = new TimeScale(this, options.timeScale, this._options.localization);
+		this._timeScale = new TimeScale(
+			this,
+			options.timeScale,
+			this._options.localization
+		);
 		this._crosshair = new Crosshair(this, options.crosshair);
 		this._magnet = new Magnet(options.crosshair);
 		this._watermark = new Watermark(this, options.watermark);
@@ -371,8 +388,12 @@ export class ChartModel implements IDestroyable {
 		this.createPane();
 		this._panes[0].setStretchFactor(DEFAULT_STRETCH_FACTOR * 2);
 
-		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
-		this._backgroundBottomColor = this._getBackgroundColor(BackgroundColorSide.Bottom);
+		this._backgroundTopColor = this._getBackgroundColor(
+			BackgroundColorSide.Top
+		);
+		this._backgroundBottomColor = this._getBackgroundColor(
+			BackgroundColorSide.Bottom
+		);
 	}
 
 	public fullUpdate(): void {
@@ -428,13 +449,20 @@ export class ChartModel implements IDestroyable {
 			this._priceScalesOptionsChanged.fire();
 		}
 
-		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
-		this._backgroundBottomColor = this._getBackgroundColor(BackgroundColorSide.Bottom);
+		this._backgroundTopColor = this._getBackgroundColor(
+			BackgroundColorSide.Top
+		);
+		this._backgroundBottomColor = this._getBackgroundColor(
+			BackgroundColorSide.Bottom
+		);
 
 		this.fullUpdate();
 	}
 
-	public applyPriceScaleOptions(priceScaleId: string, options: DeepPartial<PriceScaleOptions>): void {
+	public applyPriceScaleOptions(
+		priceScaleId: string,
+		options: DeepPartial<PriceScaleOptions>
+	): void {
 		if (priceScaleId === DefaultPriceScaleId.Left) {
 			this.applyOptions({
 				leftPriceScale: options,
@@ -450,8 +478,10 @@ export class ChartModel implements IDestroyable {
 		const res = this.findPriceScale(priceScaleId);
 
 		if (res === null) {
-			if (process.env.NODE_ENV === 'development') {
-				throw new Error(`Trying to apply price scale options with incorrect ID: ${priceScaleId}`);
+			if (process.env.LIGHTWEIGHT_CHARTS_NODE_ENV === "development") {
+				throw new Error(
+					`Trying to apply price scale options with incorrect ID: ${priceScaleId}`
+				);
 			}
 
 			return;
@@ -516,7 +546,7 @@ export class ChartModel implements IDestroyable {
 			this._panes.push(pane);
 		}
 
-		const actualIndex = (index === undefined) ? this._panes.length - 1 : index;
+		const actualIndex = index === undefined ? this._panes.length - 1 : index;
 
 		// we always do autoscaling on the creation
 		// if autoscale option is true, it is ok, just recalculate by invalidation mask
@@ -634,14 +664,21 @@ export class ChartModel implements IDestroyable {
 		return this._serieses;
 	}
 
-	public setAndSaveCurrentPosition(x: Coordinate, y: Coordinate, pane: Pane): void {
+	public setAndSaveCurrentPosition(
+		x: Coordinate,
+		y: Coordinate,
+		pane: Pane
+	): void {
 		this._crosshair.saveOriginCoord(x, y);
 		let price = NaN;
 		let index = this._timeScale.coordinateToIndex(x);
 
 		const visibleBars = this._timeScale.visibleStrictRange();
 		if (visibleBars !== null) {
-			index = Math.min(Math.max(visibleBars.left(), index), visibleBars.right()) as TimePointIndex;
+			index = Math.min(
+				Math.max(visibleBars.left(), index),
+				visibleBars.right()
+			) as TimePointIndex;
 		}
 
 		const priceScale = pane.defaultPriceScale();
@@ -676,7 +713,11 @@ export class ChartModel implements IDestroyable {
 		this._crosshair.updateAllViews();
 	}
 
-	public updateTimeScale(newBaseIndex: TimePointIndex | null, newPoints?: readonly TimeScalePoint[], firstChangedPointIndex?: number): void {
+	public updateTimeScale(
+		newBaseIndex: TimePointIndex | null,
+		newPoints?: readonly TimeScalePoint[],
+		firstChangedPointIndex?: number
+	): void {
 		const oldFirstTime = this._timeScale.indexToTime(0 as TimePointIndex);
 
 		if (newPoints !== undefined && firstChangedPointIndex !== undefined) {
@@ -691,16 +732,27 @@ export class ChartModel implements IDestroyable {
 		// if time scale cannot return current visible bars range (e.g. time scale has zero-width)
 		// then we do not need to update right offset to shift visible bars range to have the same right offset as we have before new bar
 		// (and actually we cannot)
-		if (visibleBars !== null && oldFirstTime !== null && newFirstTime !== null) {
+		if (
+			visibleBars !== null &&
+			oldFirstTime !== null &&
+			newFirstTime !== null
+		) {
 			const isLastSeriesBarVisible = visibleBars.contains(currentBaseIndex);
-			const isLeftBarShiftToLeft = oldFirstTime.timestamp > newFirstTime.timestamp;
-			const isSeriesPointsAdded = newBaseIndex !== null && newBaseIndex > currentBaseIndex;
-			const isSeriesPointsAddedToRight = isSeriesPointsAdded && !isLeftBarShiftToLeft;
+			const isLeftBarShiftToLeft =
+				oldFirstTime.timestamp > newFirstTime.timestamp;
+			const isSeriesPointsAdded =
+				newBaseIndex !== null && newBaseIndex > currentBaseIndex;
+			const isSeriesPointsAddedToRight =
+				isSeriesPointsAdded && !isLeftBarShiftToLeft;
 
-			const needShiftVisibleRangeOnNewBar = isLastSeriesBarVisible && this._timeScale.options().shiftVisibleRangeOnNewBar;
+			const needShiftVisibleRangeOnNewBar =
+				isLastSeriesBarVisible &&
+				this._timeScale.options().shiftVisibleRangeOnNewBar;
 			if (isSeriesPointsAddedToRight && !needShiftVisibleRangeOnNewBar) {
 				const compensationShift = newBaseIndex - currentBaseIndex;
-				this._timeScale.setRightOffset(this._timeScale.rightOffset() - compensationShift);
+				this._timeScale.setRightOffset(
+					this._timeScale.rightOffset() - compensationShift
+				);
 			}
 		}
 
@@ -714,7 +766,9 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public paneForSource(source: IPriceDataSource): Pane | null {
-		const pane = this._panes.find((p: Pane) => p.orderedSources().includes(source));
+		const pane = this._panes.find((p: Pane) =>
+			p.orderedSources().includes(source)
+		);
 		return pane === undefined ? null : pane;
 	}
 
@@ -745,7 +799,10 @@ export class ChartModel implements IDestroyable {
 		return this._priceScalesOptionsChanged;
 	}
 
-	public createSeries<T extends SeriesType>(seriesType: T, options: SeriesOptionsMap[T]): Series<T> {
+	public createSeries<T extends SeriesType>(
+		seriesType: T,
+		options: SeriesOptionsMap[T]
+	): Series<T> {
 		const pane = this._panes[0];
 		const series = this._createSeries(options, seriesType, pane);
 		this._serieses.push(series);
@@ -764,7 +821,7 @@ export class ChartModel implements IDestroyable {
 		const pane = this.paneForSource(series);
 
 		const seriesIndex = this._serieses.indexOf(series);
-		assert(seriesIndex !== -1, 'Series not found');
+		assert(seriesIndex !== -1, "Series not found");
 
 		this._serieses.splice(seriesIndex, 1);
 		ensureNotNull(pane).removeDataSource(series);
@@ -786,7 +843,7 @@ export class ChartModel implements IDestroyable {
 		} else {
 			// if move to the new scale of the same pane, keep zorder
 			// if move to new pane
-			const zOrder = (target.pane === pane) ? series.zorder() : undefined;
+			const zOrder = target.pane === pane ? series.zorder() : undefined;
 			target.pane.addDataSource(series, targetScaleId, zOrder);
 		}
 	}
@@ -834,7 +891,9 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public defaultVisiblePriceScaleId(): string {
-		return this._options.rightPriceScale.visible ? DefaultPriceScaleId.Right : DefaultPriceScaleId.Left;
+		return this._options.rightPriceScale.visible
+			? DefaultPriceScaleId.Right
+			: DefaultPriceScaleId.Left;
 	}
 
 	public backgroundBottomColor(): string {
@@ -859,8 +918,11 @@ export class ChartModel implements IDestroyable {
 		// percent should be from 0 to 100 (we're using only integer values to make cache more efficient)
 		percent = Math.max(0, Math.min(100, Math.round(percent * 100)));
 
-		if (this._gradientColorsCache === null ||
-			this._gradientColorsCache.topColor !== topColor || this._gradientColorsCache.bottomColor !== bottomColor) {
+		if (
+			this._gradientColorsCache === null ||
+			this._gradientColorsCache.topColor !== topColor ||
+			this._gradientColorsCache.bottomColor !== bottomColor
+		) {
 			this._gradientColorsCache = {
 				topColor: topColor,
 				bottomColor: bottomColor,
@@ -878,7 +940,10 @@ export class ChartModel implements IDestroyable {
 		return result;
 	}
 
-	private _paneInvalidationMask(pane: Pane | null, level: InvalidationLevel): InvalidateMask {
+	private _paneInvalidationMask(
+		pane: Pane | null,
+		level: InvalidationLevel
+	): InvalidateMask {
 		const inv = new InvalidateMask(level);
 		if (pane !== null) {
 			const index = this._panes.indexOf(pane);
@@ -889,12 +954,18 @@ export class ChartModel implements IDestroyable {
 		return inv;
 	}
 
-	private _invalidationMaskForSource(source: IPriceDataSource, invalidateType?: InvalidationLevel): InvalidateMask {
+	private _invalidationMaskForSource(
+		source: IPriceDataSource,
+		invalidateType?: InvalidationLevel
+	): InvalidateMask {
 		if (invalidateType === undefined) {
 			invalidateType = InvalidationLevel.Light;
 		}
 
-		return this._paneInvalidationMask(this.paneForSource(source), invalidateType);
+		return this._paneInvalidationMask(
+			this.paneForSource(source),
+			invalidateType
+		);
 	}
 
 	private _invalidate(mask: InvalidateMask): void {
@@ -905,10 +976,17 @@ export class ChartModel implements IDestroyable {
 		this._panes.forEach((pane: Pane) => pane.grid().paneView().update());
 	}
 
-	private _createSeries<T extends SeriesType>(options: SeriesOptionsInternal<T>, seriesType: T, pane: Pane): Series<T> {
+	private _createSeries<T extends SeriesType>(
+		options: SeriesOptionsInternal<T>,
+		seriesType: T,
+		pane: Pane
+	): Series<T> {
 		const series = new Series<T>(this, options, seriesType);
 
-		const targetScaleId = options.priceScaleId !== undefined ? options.priceScaleId : this.defaultVisiblePriceScaleId();
+		const targetScaleId =
+			options.priceScaleId !== undefined
+				? options.priceScaleId
+				: this.defaultVisiblePriceScaleId();
 		pane.addDataSource(series, targetScaleId);
 
 		if (!isDefaultPriceScale(targetScaleId)) {
@@ -923,9 +1001,9 @@ export class ChartModel implements IDestroyable {
 		const layoutOptions = this._options.layout;
 
 		if (layoutOptions.background.type === ColorType.VerticalGradient) {
-			return side === BackgroundColorSide.Top ?
-				layoutOptions.background.topColor :
-				layoutOptions.background.bottomColor;
+			return side === BackgroundColorSide.Top
+				? layoutOptions.background.topColor
+				: layoutOptions.background.bottomColor;
 		}
 
 		return layoutOptions.background.color;

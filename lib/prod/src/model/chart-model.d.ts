@@ -1,23 +1,23 @@
-import { IDestroyable } from '../helpers/idestroyable';
-import { ISubscription } from '../helpers/isubscription';
-import { DeepPartial } from '../helpers/strict-type-checks';
-import { PriceAxisViewRendererOptions } from '../renderers/iprice-axis-view-renderer';
-import { PriceAxisRendererOptionsProvider } from '../renderers/price-axis-renderer-options-provider';
-import { Coordinate } from './coordinate';
-import { Crosshair, CrosshairOptions } from './crosshair';
-import { GridOptions } from './grid';
-import { InvalidateMask, ITimeScaleAnimation } from './invalidate-mask';
-import { IPriceDataSource } from './iprice-data-source';
-import { LayoutOptions } from './layout-options';
-import { LocalizationOptions } from './localization-options';
-import { Pane } from './pane';
-import { Point } from './point';
-import { PriceScale, PriceScaleOptions } from './price-scale';
-import { Series } from './series';
-import { SeriesOptionsMap, SeriesType } from './series-options';
-import { LogicalRange, TimePointIndex, TimeScalePoint } from './time-data';
-import { TimeScale, TimeScaleOptions } from './time-scale';
-import { Watermark, WatermarkOptions } from './watermark';
+import { IDestroyable } from "../helpers/idestroyable";
+import { ISubscription } from "../helpers/isubscription";
+import { DeepPartial } from "../helpers/strict-type-checks";
+import { PriceAxisViewRendererOptions } from "../renderers/iprice-axis-view-renderer";
+import { PriceAxisRendererOptionsProvider } from "../renderers/price-axis-renderer-options-provider";
+import { Coordinate } from "./coordinate";
+import { Crosshair, CrosshairOptions } from "./crosshair";
+import { GridOptions } from "./grid";
+import { InvalidateMask, ITimeScaleAnimation } from "./invalidate-mask";
+import { IPriceDataSource } from "./iprice-data-source";
+import { LayoutOptions } from "./layout-options";
+import { LocalizationOptions } from "./localization-options";
+import { Pane } from "./pane";
+import { Point } from "./point";
+import { PriceScale, PriceScaleOptions } from "./price-scale";
+import { Series } from "./series";
+import { SeriesOptionsMap, SeriesType } from "./series-options";
+import { LogicalRange, TimePointIndex, TimeScalePoint } from "./time-data";
+import { TimeScale, TimeScaleOptions } from "./time-scale";
+import { Watermark, WatermarkOptions } from "./watermark";
 /**
  * Represents options for how the chart is scrolled by the mouse and touch gestures.
  */
@@ -93,7 +93,7 @@ export interface KineticScrollOptions {
      */
     mouse: boolean;
 }
-declare type HandleScaleOptionsInternal = Omit<HandleScaleOptions, 'axisPressedMouseMove' | 'axisDoubleClickReset'> & {
+declare type HandleScaleOptionsInternal = Omit<HandleScaleOptions, "axisPressedMouseMove" | "axisDoubleClickReset"> & {
     /** @public */
     axisPressedMouseMove: AxisPressedMouseMoveOptions;
     /** @public */
@@ -155,7 +155,7 @@ export declare type VisiblePriceScaleOptions = PriceScaleOptions;
 /**
  * Represents overlay price scale options.
  */
-export declare type OverlayPriceScaleOptions = Omit<PriceScaleOptions, 'visible' | 'autoScale'>;
+export declare type OverlayPriceScaleOptions = Omit<PriceScaleOptions, "visible" | "autoScale">;
 /**
  * Determine how to exit the tracking mode.
  *
@@ -260,7 +260,7 @@ export interface ChartOptions {
      */
     trackingMode: TrackingModeOptions;
 }
-export declare type ChartOptionsInternal = Omit<ChartOptions, 'handleScroll' | 'handleScale' | 'layout'> & {
+export declare type ChartOptionsInternal = Omit<ChartOptions, "handleScroll" | "handleScale" | "layout"> & {
     /** @public */
     handleScroll: HandleScrollOptions;
     /** @public */

@@ -1,8 +1,8 @@
-import { Series, SeriesUpdateInfo } from '../model/series';
-import { SeriesPlotRow } from '../model/series-data';
-import { SeriesType } from '../model/series-options';
-import { BusinessDay, Time, TimePoint, TimePointIndex, TimeScalePoint } from '../model/time-data';
-import { SeriesDataItemTypeMap } from './data-consumer';
+import { Series, SeriesUpdateInfo } from "../model/series";
+import { SeriesPlotRow } from "../model/series-data";
+import { SeriesType } from "../model/series-options";
+import { BusinessDay, Time, TimePoint, TimePointIndex, TimeScalePoint } from "../model/time-data";
+import { SeriesDataItemTypeMap } from "./data-consumer";
 export declare function convertTime(time: Time): TimePoint;
 export declare function stringToBusinessDay(value: string): BusinessDay;
 export interface TimeScaleChanges {
