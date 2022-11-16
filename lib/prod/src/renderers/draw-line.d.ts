@@ -36,7 +36,7 @@ export interface LinePoint {
 /**
  * Represents the possible line styles.
  */
-export declare const enum LineStyle {
+export declare enum LineStyle {
     /**
      * A solid line.
      */

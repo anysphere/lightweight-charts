@@ -21,7 +21,7 @@ export declare type TimeAndCoordinateProvider = () => CrosshairTimeAndCoordinate
 /**
  * Represents the crosshair mode.
  */
-export declare const enum CrosshairMode {
+export declare enum CrosshairMode {
     /**
      * This mode allows crosshair to move freely on the chart.
      */
