@@ -10,6 +10,13 @@ export type HandlerTouchEventCallback = (event: MouseEventHandlerTouchEvent) => 
 export type EmptyCallback = () => void;
 export type PinchEventCallback = (middlePoint: Position, scale: number) => void;
 
+const enum MouseEventButton {
+	Left = 0,
+	Middle = 1,
+	Right = 2,
+	Fourth = 3,
+	Fifth = 4,
+}
 export interface MouseEventHandlers {
 	pinchStartEvent?: EmptyCallback;
 	pinchEvent?: PinchEventCallback;
